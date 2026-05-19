@@ -5,7 +5,7 @@ namespace SnakeGame
 {
     /// <summary>
     /// Точка входу до програми "Змійка".
-    /// Запускає головне вікно з правилами гри.
+    /// Запускає головне вікно з правилами гри та вибором алгоритму.
     /// </summary>
     internal static class Program
     {
@@ -21,7 +21,8 @@ namespace SnakeGame
             {
                 if (rulesForm.ShowDialog() == DialogResult.OK)
                 {
-                    Application.Run(new GameForm());
+                    // Передаємо вибраний алгоритм у GameForm
+                    Application.Run(new GameForm(rulesForm.SelectedAlgorithm));
                 }
             }
         }
