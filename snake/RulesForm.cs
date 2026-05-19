@@ -14,6 +14,14 @@ namespace SnakeGame
         private Button exitButton = null!;
         private Label titleLabel = null!;
         private Label rulesLabel = null!;
+        
+        // Група кнопок та властивість для збереження вибраного алгоритму
+        private GroupBox algoGroup = null!;
+        private RadioButton aStarRadio = null!;
+        private RadioButton bfsRadio = null!;
+        private RadioButton greedyRadio = null!;
+
+        public PathAlgorithm SelectedAlgorithm { get; private set; } = PathAlgorithm.AStar;
 
         public RulesForm()
         {
@@ -22,9 +30,9 @@ namespace SnakeGame
 
         private void InitializeComponent()
         {
-            // Налаштування форми
+            // Налаштування форми (висоту збільшено, щоб помістилися кнопки)
             Text = "Змійка - Правила гри";
-            Size = new Size(620, 580);
+            Size = new Size(620, 720); 
             StartPosition = FormStartPosition.CenterScreen;
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
@@ -50,8 +58,8 @@ namespace SnakeGame
                        "    (↑ ↓ ← →) або клавіш WASD.\r\n\r\n" +
                        "  • Збирайте червону їжу — за неї дається 1 очко.\r\n\r\n" +
                        "  • Шукайте золоту бонусну їжу — вона дає 5 очок!\r\n\r\n" +
-                       "  • Червона змійка-бот керується штучним інтелектом\r\n" +
-                       "    (алгоритм A*). Вона також полює за їжею.\r\n\r\n" +
+                       "  • Червона змійка-бот керується штучним інтелектом.\r\n" +
+                       "    Вона також полює за їжею.\r\n\r\n" +
                        "  • При зіткненні зі стіною змійка з'являється з протилежного боку.\r\n\r\n" +
                        "  • НЕ ВРІЗАЙТЕСЬ у власне тіло чи у тіло змійки-суперника!\r\n\r\n" +
                        "  • Перемагає той, хто залишиться живим. У разі загибелі обох —\r\n" +
@@ -60,10 +68,55 @@ namespace SnakeGame
                 Font = new Font("Segoe UI", 11, FontStyle.Regular),
                 ForeColor = Color.White,
                 Location = new UIPoint(40, 80),
-                Size = new Size(540, 360),
+                Size = new Size(540, 310),
                 TextAlign = ContentAlignment.TopLeft
             };
             Controls.Add(rulesLabel);
+
+            // Панель вибору алгоритму
+            algoGroup = new GroupBox
+            {
+                Text = "Виберіть алгоритм ШІ для бота:",
+                ForeColor = Color.LightGray,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Location = new UIPoint(40, 390),
+                Size = new Size(520, 180)
+            };
+            Controls.Add(algoGroup);
+
+            aStarRadio = new RadioButton
+            {
+                Text = "🔵 A* (А-зірочка) — основний. Завжди знаходить оптимальний шлях і робить це швидко.",
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 10, FontStyle.Regular),
+                Location = new UIPoint(20, 35),
+                Size = new Size(480, 40),
+                Checked = true // A* вибрано за замовчуванням
+            };
+            aStarRadio.CheckedChanged += (s, e) => { if (aStarRadio.Checked) SelectedAlgorithm = PathAlgorithm.AStar; };
+            algoGroup.Controls.Add(aStarRadio);
+
+            bfsRadio = new RadioButton
+            {
+                Text = "🟡 BFS (пошук в ширину). Завжди знаходить найкоротший шлях, але повільніше за A*.",
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 10, FontStyle.Regular),
+                Location = new UIPoint(20, 80),
+                Size = new Size(480, 40)
+            };
+            bfsRadio.CheckedChanged += (s, e) => { if (bfsRadio.Checked) SelectedAlgorithm = PathAlgorithm.BFS; };
+            algoGroup.Controls.Add(bfsRadio);
+
+            greedyRadio = new RadioButton
+            {
+                Text = "🟢 Greedy (жадібний). Дуже швидкий, але ненадійний — може застрягнути в тупику.",
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 10, FontStyle.Regular),
+                Location = new UIPoint(20, 125),
+                Size = new Size(480, 40)
+            };
+            greedyRadio.CheckedChanged += (s, e) => { if (greedyRadio.Checked) SelectedAlgorithm = PathAlgorithm.Greedy; };
+            algoGroup.Controls.Add(greedyRadio);
 
             // Кнопка "Почати гру"
             startButton = new Button
@@ -71,7 +124,7 @@ namespace SnakeGame
                 Text = "ПОЧАТИ ГРУ",
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 Size = new Size(200, 50),
-                Location = new UIPoint(80, 470),
+                Location = new UIPoint(80, 600),
                 BackColor = Color.FromArgb(46, 204, 113),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
@@ -86,7 +139,7 @@ namespace SnakeGame
                 Text = "ВИХІД",
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 Size = new Size(200, 50),
-                Location = new UIPoint(340, 470),
+                Location = new UIPoint(320, 600),
                 BackColor = Color.FromArgb(231, 76, 60),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
