@@ -31,9 +31,10 @@ namespace SnakeGame
         private Button restartButton = null!;
         private bool isPaused;
 
-        public GameForm()
+        public GameForm(PathAlgorithm selectedAlgorithm)
         {
-            gameState = new GameState(FieldWidth, FieldHeight);
+            // Передаємо вибраний алгоритм у третій параметр GameState
+            gameState = new GameState(FieldWidth, FieldHeight, selectedAlgorithm);
             InitializeComponent();
             StartGame();
         }
